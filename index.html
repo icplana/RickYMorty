@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rick & Morty</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- <link rel="stylesheet" href="style.css"> -->
     <link rel="shortcut icon" href="./assets/images/rickFavIcon.png" type="image/x-icon">
 </head>
 <body class="px-3 grid grid-cols-4 grid-rows-5">
@@ -53,21 +52,15 @@
     </aside> -->
     
     <!-- SIDEBAR lOCATIONS-->
-    <aside class="col-start-1 col-end-2 row-start-2 row-end-5 rounded-lg border-r-2 bg-gray-200 py-3 px-2">
-        <h3 class="text-2xl mb-2.5">Locations</h3>
-        <ul class="ml-3 underline">
-            <li class="mb-1.5">Locations 1</li>
-            <li class="mb-1.5">Locations 2</li>
-            <li class="mb-1.5">Locations 3</li>
-            <li class="mb-1.5">Locations 4</li>
-            <li class="mb-1.5">Locations 5</li>
-            <li class="mb-1.5">Locations 6</li>
-            <li class="mb-1.5">Locations 7</li>
-            <li class="mb-1.5">Locations 8</li>
-            <li class="mb-1.5">Locations 9</li>
-            <li class="mb-1.5">Locations 10</li>
-            <li class="mb-1.5">Locations 11</li>
+    <aside id="asideBox" class="col-start-1 col-end-2 row-start-2 row-end-5 rounded-lg border-r-2 bg-gray-200 py-3 px-2">
+        <h3 id="asideBoxTitle" class="text-2xl mb-2.5">Locations</h3>
+        <ul id="asideBoxList" class="ml-3 mb-3">
         </ul>
+
+        <div class="flex justify-evenly">
+            <button id ="prevAsideBtn" class="bg-gray-800 text-white rounded-lg px-2 py-1">Prev</button>
+            <button id ="nextAsideBtn" class="bg-gray-800 text-white rounded-lg px-2 py-1">Next</button>
+        </div>
     </aside>
     <!-- MAIN CONTENT EPISODE -->
    <!-- <main class="row-start-2 row-end-5 col-start-2 col-end-5 ms-3 bg-gradient-to-br rounded-lg from-white to-gray-500">
@@ -323,5 +316,6 @@
     <footer class="row-span-1 col-start-1 col-span-4 justify-end items-center py-4 px-4 bg-gray-500 rounded-lg mt-2 flex">
         <p>All data comes from <a href="https://rickandmortyapi.com/" class="underline cursor-pointer">https://rickandmortyapi.com/</a></p>
     </footer>
+    <script type="module" src="dist/app.js"></script>
 </body>
 </html>
