@@ -7,10 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="shortcut icon" href="./assets/images/rickFavIcon.png" type="image/x-icon">
 </head>
-<body class="px-3 grid grid-cols-4 grid-rows-5">
+<body class="px-3">
 
     <!-- HEADER -->
-    <header class="col-start-1 col-end-5 row-start-1 row-end-2 flex items-center bg-gray-100">
+    <header class=" min-h-32 col-start-1 col-end-5 row-start-1 row-end-2 flex items-center bg-gray-100">
         <h1 class="text-4xl border-b-2 py-2.5 px-2 ps-4">Rick y Morty API</h1>
     </header>
 
@@ -52,8 +52,10 @@
     </aside> -->
     
     <!-- SIDEBAR lOCATIONS-->
-    <aside id="asideBox" class="col-start-1 col-end-2 row-start-2 row-end-5 rounded-lg border-r-2 bg-gray-200 py-3 px-2">
+    <main class="grid grid-cols-4">
+    <aside id="asideBox" class="col-start-1 col-end-2 rounded-lg border-r-2 bg-gray-200 py-3 px-2">
         <h3 id="asideBoxTitle" class="text-2xl mb-2.5">Locations</h3>
+        <p id="asideBoxP"></p>
         <ul id="asideBoxList" class="ml-3 mb-3">
         </ul>
 
@@ -150,7 +152,7 @@
     
 
     <!-- MAIN CONTENT CHARACTER-->
-     <main class="row-start-2 row-end-5 col-start-2 col-end-5 ms-3 bg-gradient-to-br rounded-lg from-white to-gray-500">
+     <section id="mainBox" class="overscroll-y-auto col-start-2 col-end-5 ms-3 bg-gradient-to-br rounded-lg from-white to-gray-500">
         <div class="flex gap-4 mb-4">
             <div>
                 <img src="./assets/images/morty.jpeg" class="rounded-2xl" alt="">
@@ -225,7 +227,7 @@
                
             </ul>
         </div>
-    </main>
+    </section>
 
 
 
@@ -312,8 +314,8 @@
 
     </main> -->
 
-
-    <footer class="row-span-1 col-start-1 col-span-4 justify-end items-center py-4 px-4 bg-gray-500 rounded-lg mt-2 flex">
+</main>
+    <footer class="min-h-32 justify-end items-center py-4 px-4 bg-gray-500 rounded-lg mt-2 flex">
         <p>All data comes from <a href="https://rickandmortyapi.com/" class="underline cursor-pointer">https://rickandmortyapi.com/</a></p>
     </footer>
     <script type="module" src="dist/app.js"></script>
