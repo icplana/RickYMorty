@@ -29,8 +29,7 @@ const getCharacters = (url) => __awaiter(void 0, void 0, void 0, function* () {
     const data = yield response.json();
     return data;
 });
-const getLocations = () => __awaiter(void 0, void 0, void 0, function* () {
-    const url = 'https://rickandmortyapi.com/api/locations';
+const getLocations = (url) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield fetch(url);
     const data = yield response.json();
     return data;
@@ -55,6 +54,7 @@ const getLocationData = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return data;
 });
 const printEpisodesAside = (start, end) => __awaiter(void 0, void 0, void 0, function* () {
+    navgitationProperties.aside = 'episodes';
     let season = '';
     if (start === 1) {
         season = "Season 01";
@@ -100,7 +100,8 @@ const printEpisodesAside = (start, end) => __awaiter(void 0, void 0, void 0, fun
     for (let i = start; i <= end; i++) {
         const data = yield getEpisodeData(i);
         const newLi = document.createElement('li');
-        newLi.classList.add('mb-1.5', 'hover:underline', 'cursor-pointer');
+        newLi.setAttribute('episode-id', data.id.toString());
+        newLi.classList.add('mb-1.5', 'hover:underline', 'cursor-pointer', 'asideListEpisode');
         newLi.textContent = data.name + ' ';
         const newSpan = document.createElement('span');
         newSpan.textContent = data.episode;
@@ -110,18 +111,104 @@ const printEpisodesAside = (start, end) => __awaiter(void 0, void 0, void 0, fun
     }
     asideBoxList.innerHTML = '';
     asideBoxList.appendChild(htmlFragment);
+    const list = document.querySelectorAll('.asideListEpisode');
+    list.forEach(element => element.addEventListener('click', handleAsideEpisodeClick));
 });
 const printCharactersAside = (url) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     if (url === null)
         return;
-    const page = url.charAt(url.length - 1);
-    const initialCharacter = '';
-    const lastCharacter = '';
+    navgitationProperties.aside = 'characters';
+    const list = document.querySelectorAll('.asideListEpisode');
+    list.forEach(element => element.removeEventListener('click', handleAsideEpisodeClick));
     const data = yield getCharacters(url);
+    const page = Number(url.slice(47));
+    const initialCharacter = page * 20 - 19;
+    const lastCharacter = Math.min(page * 20, data.info.count);
+    if (initialCharacter === 1) {
+        prevAsideBtn.classList.add('bg-gray-500', 'cursor-default', 'disabled');
+        prevAsideBtn.classList.remove('bg-gray-800');
+    }
+    else {
+        prevAsideBtn.classList.remove('bg-gray-500', 'cursor-default', 'disabled');
+        prevAsideBtn.classList.add('bg-gray-800');
+    }
+    if (lastCharacter === data.info.count) {
+        nextAsideBtn.classList.add('bg-gray-500', 'cursor-default', 'disabled');
+        nextAsideBtn.classList.remove('bg-gray-800');
+    }
+    else {
+        nextAsideBtn.classList.remove('bg-gray-500', 'cursor-default', 'disabled');
+        nextAsideBtn.classList.add('bg-gray-800');
+    }
     prevAsideBtn.setAttribute('prev-data', (_a = data === null || data === void 0 ? void 0 : data.info) === null || _a === void 0 ? void 0 : _a.prev);
+    prevAsideBtn.setAttribute('first-character', initialCharacter.toString());
     nextAsideBtn.setAttribute('next-data', (_b = data === null || data === void 0 ? void 0 : data.info) === null || _b === void 0 ? void 0 : _b.next);
-    asideBoxP.textContent = `There are ${data.info.count} characters. Showing from ${initialCharacter} to ${lastCharacter} `;
+    nextAsideBtn.setAttribute('last-character', lastCharacter.toString());
+    asideBoxTitle.textContent = 'Characters';
+    asideBoxP.textContent = `There are ${data.info.count} characters. Showing from ${initialCharacter} to ${lastCharacter}. Page ${page}/${data.info.pages} `;
+    const charactersList = data.results;
+    asideBoxList.innerHTML = '';
+    const HTMLFragment = document.createDocumentFragment();
+    charactersList.forEach(each => {
+        const newLi = document.createElement('li');
+        newLi.classList.add('mb-1.5', 'hover:underline', 'cursor-pointer', 'asideListCharacter');
+        newLi.setAttribute('character-id', each.id.toString());
+        newLi.textContent = each.name;
+        HTMLFragment.appendChild(newLi);
+    });
+    asideBoxList.appendChild(HTMLFragment);
+    const characterList = document.querySelectorAll('.asideListCharacter');
+    characterList.forEach(element => element.addEventListener('click', handleAsideCharacterClick));
+});
+const printLocationsAside = (url) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c, _d;
+    if (url === null)
+        return;
+    navgitationProperties.aside = 'locations';
+    const episodesList = document.querySelectorAll('.asideListEpisode');
+    episodesList.forEach(element => element.removeEventListener('click', handleAsideEpisodeClick));
+    const characterList = document.querySelectorAll('.asideListCharacter');
+    characterList.forEach(element => element.removeEventListener('click', handleAsideCharacterClick));
+    const data = yield getLocations(url);
+    const page = Number(url.slice(47));
+    const initialLocation = page * 20 - 19;
+    const lastLocation = Math.min(page * 20, data.info.count);
+    if (initialLocation === 1) {
+        prevAsideBtn.classList.add('bg-gray-500', 'cursor-default', 'disabled');
+        prevAsideBtn.classList.remove('bg-gray-800');
+    }
+    else {
+        prevAsideBtn.classList.remove('bg-gray-500', 'cursor-default', 'disabled');
+        prevAsideBtn.classList.add('bg-gray-800');
+    }
+    if (lastLocation === data.info.count) {
+        nextAsideBtn.classList.add('bg-gray-500', 'cursor-default', 'disabled');
+        nextAsideBtn.classList.remove('bg-gray-800');
+    }
+    else {
+        nextAsideBtn.classList.remove('bg-gray-500', 'cursor-default', 'disabled');
+        nextAsideBtn.classList.add('bg-gray-800');
+    }
+    prevAsideBtn.setAttribute('prev-data', (_c = data === null || data === void 0 ? void 0 : data.info) === null || _c === void 0 ? void 0 : _c.prev);
+    prevAsideBtn.setAttribute('first-location', initialLocation.toString());
+    nextAsideBtn.setAttribute('next-data', (_d = data === null || data === void 0 ? void 0 : data.info) === null || _d === void 0 ? void 0 : _d.next);
+    nextAsideBtn.setAttribute('last-location', lastLocation.toString());
+    asideBoxTitle.textContent = 'Location';
+    asideBoxP.textContent = `There are ${data.info.count} locations. Showing from ${initialLocation} to ${lastLocation}. Page ${page}/${data.info.pages} `;
+    const locationsList = data.results;
+    asideBoxList.innerHTML = '';
+    const HTMLFragment = document.createDocumentFragment();
+    locationsList.forEach(each => {
+        const newLi = document.createElement('li');
+        newLi.classList.add('mb-1.5', 'hover:underline', 'cursor-pointer', 'asideListLocation');
+        newLi.setAttribute('location-id', each.id.toString());
+        newLi.textContent = each.name;
+        HTMLFragment.appendChild(newLi);
+    });
+    asideBoxList.appendChild(HTMLFragment);
+    const locationList = document.querySelectorAll('.asideListLocation');
+    locationList.forEach(element => element.addEventListener('click', handleAsideLocationClick));
 });
 const printEspisodeMain = (id) => __awaiter(void 0, void 0, void 0, function* () {
     mainBox.innerHTML = '';
@@ -150,7 +237,7 @@ const printEspisodeMain = (id) => __awaiter(void 0, void 0, void 0, function* ()
     characters.forEach(each => {
         const li = document.createElement('li');
         const liBox = document.createElement('div');
-        liBox.classList.add('mb-1', 'mr-2');
+        liBox.classList.add('mb-1', 'mr-2', 'characterFromEpisodeMain');
         fetch(each)
             .then(resp => resp.json())
             .then(data => {
@@ -178,7 +265,66 @@ const printEspisodeMain = (id) => __awaiter(void 0, void 0, void 0, function* ()
     charactersBox.appendChild(charactersUl);
     HTMLFragment.appendChild(charactersBox);
     mainBox.appendChild(HTMLFragment);
+    const characterList = document.querySelectorAll('.characterFromEpisodeMain');
+    characterList.forEach(each => each.addEventListener('click', (e) => {
+        const characterId = Number(e.target.parentElement.getAttribute('char-id') || e.target.parentElement.parentElement.getAttribute('char-id'));
+        printCharactersAside('https://rickandmortyapi.com/api/character?page=1');
+        printCharacterMain(characterId);
+    }));
 });
+const printCharacterMain = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, status, species, type, gender, origin, location, image, episode, url, created } = yield getCharacterData(id);
+    mainBox.innerHTML = `
+    <div class="flex gap-4 mb-4">
+        <div>
+            <img src="${image}" class="rounded-2xl" alt="">
+        </div>
+        <div>
+            <h3 class="text-3xl">${name}</h3>
+            <p class="font-bold">Specie: <span class="font-normal">${species}</span></p>
+            <p class="font-bold">Status: <span class="font-normal">${status}</span></p>
+            <p class="font-bold">Gender: <span class="font-normal">${gender}</span></p>
+            <p class="font-bold">Dimension: <span class="font-normal">${location.name}</span></p>
+        </div>
+    </div>
+
+    <div class="ms-2">
+        <h4 class="text-2xl mb-2 font-semibold">List of episodes where ${name} appears</h4>
+        <ul class="flex flex-wrap gap-6">
+            ${episode.map(each => {
+        const id = each.slice(40);
+        return `
+                <li class="cursor-pointer hover:underline episodeFromCharacterMain">
+                    <div>
+                        <h5 class="text-xl bold" episode-id="${id}">Episode ${id}</h5>
+                    </div>
+                </li>
+                `;
+    }).join('')}
+        </ul>
+    </div>`;
+    const list = document.querySelectorAll('.episodeFromCharacterMain');
+    list.forEach(each => {
+        each.addEventListener('click', (e) => {
+            var _a;
+            const episodeId = Number((_a = e.target) === null || _a === void 0 ? void 0 : _a.getAttribute('episode-id'));
+            printEspisodeMain(episodeId);
+            printEpisodesAside(1, 11);
+        });
+    });
+});
+const printLocationMain = (id) => __awaiter(void 0, void 0, void 0, function* () {
+});
+const handleAsideEpisodeClick = (e) => {
+    const id = e.target.getAttribute('episode-id');
+    printEspisodeMain(id);
+};
+const handleAsideCharacterClick = (e) => {
+    const id = e.target.getAttribute('character-id');
+    printCharacterMain(id);
+};
+const handleAsideLocationClick = (e) => {
+};
 const handleNextAsideBtnEpisodesClick = () => {
     if (nextAsideBtn.classList.contains('disabled'))
         return;
@@ -201,6 +347,18 @@ const handlePrevAsideBtnEpisodesClick = () => {
     }
     printEpisodesAside(start, end);
 };
+const handlePrevAsideBtnCharactersClick = () => __awaiter(void 0, void 0, void 0, function* () {
+    if (prevAsideBtn.classList.contains('disabled'))
+        return;
+    const url = prevAsideBtn.getAttribute('prev-data');
+    printCharactersAside(url);
+});
+const handleNextAsideBtnCharactersClick = () => __awaiter(void 0, void 0, void 0, function* () {
+    if (nextAsideBtn.classList.contains('disabled'))
+        return;
+    const url = nextAsideBtn.getAttribute('next-data');
+    printCharactersAside(url);
+});
 document.addEventListener('DOMContentLoaded', () => {
     printEpisodesAside(1, 11);
     printEspisodeMain(1);
@@ -208,10 +366,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navgitationProperties.aside === 'episodes') {
             handleNextAsideBtnEpisodesClick();
         }
+        if (navgitationProperties.aside === 'characters') {
+            handleNextAsideBtnCharactersClick();
+        }
     });
     prevAsideBtn.addEventListener('click', () => {
         if (navgitationProperties.aside === 'episodes') {
             handlePrevAsideBtnEpisodesClick();
+        }
+        if (navgitationProperties.aside === 'characters') {
+            handlePrevAsideBtnCharactersClick();
         }
     });
 });

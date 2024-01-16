@@ -27,9 +27,14 @@ export type Character = {
     type: string,
     gender: string,
     origin: object,
-    location: object,
+    location: CharacterLocation,
     image: string,
     episode: string[],
     url: string,
     created: string,
+}
+
+type CharacterLocation = {
+    name: string,
+    url: string
 }
