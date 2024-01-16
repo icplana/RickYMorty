@@ -21,9 +21,8 @@ const navgitationProperties:{
 
 //GET API INFO
 
-const getEpisodes = async () => {
+const getEpisodes = async ( url:string ) => {
     
-    const url = 'https://rickandmortyapi.com/api/episode'
     const response = await fetch(url)
     const data = await response.json()
 
@@ -65,8 +64,6 @@ const getCharacterData = async (id: number ):Promise<Character> => {
     return data
 }
 
-
-
 const getLocationData = async (id: number ):Promise<Location> => {
 
     const url = 'https://rickandmortyapi.com/api/location/' + id
@@ -79,6 +76,8 @@ const getLocationData = async (id: number ):Promise<Location> => {
 
 
 //PRINT ASIDES
+
+const cleanAsideEvents = () => {}
 
 const printEpisodesAside = async (start:number, end: number ) => {
 
@@ -236,7 +235,7 @@ const printLocationsAside = async ( url: string ) => {
 
     const data = await getLocations( url )
 
-    const page:number = Number(url.slice(47))
+    const page:number = Number(url.slice(46))
     const initialLocation:number = page * 20 - 19
     const lastLocation:number = Math.min(page * 20, data.info.count )
 
@@ -289,6 +288,8 @@ const printLocationsAside = async ( url: string ) => {
 
 
 //PRINT MAINS
+
+const cleanMainEvens = () => {}
 
 const printEspisodeMain = async (id:number) => {
     mainBox.innerHTML = ''
@@ -392,7 +393,7 @@ const printEspisodeMain = async (id:number) => {
 const printCharacterMain = async (id:number):Promise<void> => {
 
     const { name, status, species, type, gender, origin, location, image, episode, url, created }:Character = await getCharacterData( id )
-    
+    const locationId = location.url.slice(41)
     mainBox.innerHTML = `
     <div class="flex gap-4 mb-4">
         <div>
@@ -403,7 +404,7 @@ const printCharacterMain = async (id:number):Promise<void> => {
             <p class="font-bold">Specie: <span class="font-normal">${species}</span></p>
             <p class="font-bold">Status: <span class="font-normal">${status}</span></p>
             <p class="font-bold">Gender: <span class="font-normal">${gender}</span></p>
-            <p class="font-bold">Dimension: <span class="font-normal">${location.name}</span></p>
+            <p class="font-bold">Dimension: <span location-id="${locationId}" id="locationFromCharacter" class="font-normal hover:underline cursor-pointer">${location.name}</span></p>
         </div>
     </div>
 
@@ -432,10 +433,49 @@ const printCharacterMain = async (id:number):Promise<void> => {
             printEpisodesAside( 1, 11)
         })
     })
+
+    const locationFromCharacter = document.getElementById('locationFromCharacter') as HTMLSpanElement
+    locationFromCharacter.addEventListener('click', () => {
+        const locationId = Number(locationFromCharacter.getAttribute('location-id'))
+        printLocationMain(locationId)
+        printLocationsAside( 'https://rickandmortyapi.com/api/location?page=1' )
+    })
 }
 
 
 const printLocationMain = async (id:number):Promise<void> => {
+
+    const { name, type, dimension, residents, url, created } = await getLocationData( id )
+
+    mainBox.innerHTML =`<h3 class="text-3xl mb-2">${name}</h3>
+    <p class="font-bold mb-2">Type: <span class="font-normal">${type}</span></p>
+    <p class="font-bold mb-2">Dimension: <span class="font-normal">${dimension}</span></p>
+
+    <div class="mb-4">
+        <h4 class="text-2xl mb-2">Characters from this dimension</h4>
+        <ul class="ps-2 flex flex-wrap gap-4">
+        ${residents.map( each => {
+            const id = each.slice(42)
+            return `
+            <li class="cursor-pointer hover:underline characterFromLocationMain">
+                <div>
+                    <h5 class="text-xl bold" character-id="${id}">Character ${id}</h5>
+                </div>
+            </li>
+            `
+        }).join('')}
+        </ul>
+    </div>`
+
+    const list = document.querySelectorAll('.characterFromLocationMain') as NodeList
+
+    list.forEach( each => {
+        each.addEventListener('click', (e:any) => {
+            const characterId = Number( e.target?.getAttribute('character-id'))
+            printCharacterMain( characterId )
+            printCharactersAside( 'https://rickandmortyapi.com/api/character?page=1' )
+        })
+    })
 
 }
 
@@ -444,7 +484,7 @@ const printLocationMain = async (id:number):Promise<void> => {
 
 const handleAsideEpisodeClick = (e:any):void => {
     
-   const id = e.target.getAttribute('episode-id')
+   const id = e.target.getAttribute('episode-id') || e.target.parentElement.getAttribute('episode-id')
 
    printEspisodeMain(id)    
 }
@@ -457,8 +497,11 @@ const handleAsideCharacterClick = (e:any):void => {
 }
 
 const handleAsideLocationClick = (e:any):void => {
+    const id = e.target.getAttribute('location-id')
 
+    printLocationMain(id)   
 }
+
 
 const handleNextAsideBtnEpisodesClick = ():void => {
     if ( nextAsideBtn.classList.contains('disabled')) return
@@ -488,14 +531,15 @@ const handlePrevAsideBtnEpisodesClick = ():void => {
     printEpisodesAside(start, end)
 }
 
-const handlePrevAsideBtnCharactersClick = async (): Promise<void> => {
+const handlePrevAsideBtnCharactersClick = ():void => {
     if ( prevAsideBtn.classList.contains('disabled') ) return
 
     const url:string = prevAsideBtn.getAttribute('prev-data')!
 
     printCharactersAside( url )
 }
-const handleNextAsideBtnCharactersClick = async (): Promise<void> => {
+
+const handleNextAsideBtnCharactersClick = ():void => {
     if ( nextAsideBtn.classList.contains('disabled') ) return
 
     const url:string = nextAsideBtn.getAttribute('next-data')!
@@ -503,6 +547,24 @@ const handleNextAsideBtnCharactersClick = async (): Promise<void> => {
     printCharactersAside( url )
 
 }
+
+const handlePrevAsideBtnLocationsClick = ():void => {
+    if ( prevAsideBtn.classList.contains('disabled') ) return
+
+    const url:string = prevAsideBtn.getAttribute('prev-data')!
+
+    printLocationsAside( url )
+}
+
+const handleNextAsideBtnLocationsClick = ():void => {
+    if ( nextAsideBtn.classList.contains('disabled') ) return
+
+    const url:string = nextAsideBtn.getAttribute('next-data')!
+
+    printLocationsAside( url )
+}
+
+
 
 
 
@@ -512,23 +574,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     printEspisodeMain(1)
 
-    // printCharacterMain(1)
-
-    // printCharactersAside('https://rickandmortyapi.com/api/character?page=1')
-
-  
-
     nextAsideBtn.addEventListener('click', () => {
         if (navgitationProperties.aside === 'episodes') { handleNextAsideBtnEpisodesClick() }
         if (navgitationProperties.aside === 'characters') { handleNextAsideBtnCharactersClick() }
+        if (navgitationProperties.aside === 'locations') { handleNextAsideBtnLocationsClick() }
     })
 
     prevAsideBtn.addEventListener('click', () => {
         if (navgitationProperties.aside === 'episodes') { handlePrevAsideBtnEpisodesClick() }
         if (navgitationProperties.aside === 'characters') { handlePrevAsideBtnCharactersClick() }
+        if (navgitationProperties.aside === 'locations') { handlePrevAsideBtnLocationsClick() }
     } )
 
    
 })
 
 
+
+// PENDING
+
+    // - Avoid innerHTML in main renders
+    // - Organize the code in diferent sheets
+    // - create cleaning event listener in main and aside
+    // - create function to avoid repeating code in aside and main render functions
+    // - use variables to avoid hardcoding suchs as 'episodes'/'characters'/'locations', urls or others

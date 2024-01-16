@@ -18,8 +18,7 @@ const navgitationProperties = {
     aside: 'episodes',
     main: 'episodes'
 };
-const getEpisodes = () => __awaiter(void 0, void 0, void 0, function* () {
-    const url = 'https://rickandmortyapi.com/api/episode';
+const getEpisodes = (url) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield fetch(url);
     const data = yield response.json();
     return data;
@@ -53,6 +52,7 @@ const getLocationData = (id) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(data);
     return data;
 });
+const cleanAsideEvents = () => { };
 const printEpisodesAside = (start, end) => __awaiter(void 0, void 0, void 0, function* () {
     navgitationProperties.aside = 'episodes';
     let season = '';
@@ -171,7 +171,7 @@ const printLocationsAside = (url) => __awaiter(void 0, void 0, void 0, function*
     const characterList = document.querySelectorAll('.asideListCharacter');
     characterList.forEach(element => element.removeEventListener('click', handleAsideCharacterClick));
     const data = yield getLocations(url);
-    const page = Number(url.slice(47));
+    const page = Number(url.slice(46));
     const initialLocation = page * 20 - 19;
     const lastLocation = Math.min(page * 20, data.info.count);
     if (initialLocation === 1) {
@@ -210,6 +210,7 @@ const printLocationsAside = (url) => __awaiter(void 0, void 0, void 0, function*
     const locationList = document.querySelectorAll('.asideListLocation');
     locationList.forEach(element => element.addEventListener('click', handleAsideLocationClick));
 });
+const cleanMainEvens = () => { };
 const printEspisodeMain = (id) => __awaiter(void 0, void 0, void 0, function* () {
     mainBox.innerHTML = '';
     const { name, air_date, episode, characters, url, created } = yield getEpisodeData(id);
@@ -274,6 +275,7 @@ const printEspisodeMain = (id) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const printCharacterMain = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, status, species, type, gender, origin, location, image, episode, url, created } = yield getCharacterData(id);
+    const locationId = location.url.slice(41);
     mainBox.innerHTML = `
     <div class="flex gap-4 mb-4">
         <div>
@@ -284,7 +286,7 @@ const printCharacterMain = (id) => __awaiter(void 0, void 0, void 0, function* (
             <p class="font-bold">Specie: <span class="font-normal">${species}</span></p>
             <p class="font-bold">Status: <span class="font-normal">${status}</span></p>
             <p class="font-bold">Gender: <span class="font-normal">${gender}</span></p>
-            <p class="font-bold">Dimension: <span class="font-normal">${location.name}</span></p>
+            <p class="font-bold">Dimension: <span location-id="${locationId}" id="locationFromCharacter" class="font-normal hover:underline cursor-pointer">${location.name}</span></p>
         </div>
     </div>
 
@@ -312,11 +314,46 @@ const printCharacterMain = (id) => __awaiter(void 0, void 0, void 0, function* (
             printEpisodesAside(1, 11);
         });
     });
+    const locationFromCharacter = document.getElementById('locationFromCharacter');
+    locationFromCharacter.addEventListener('click', () => {
+        const locationId = Number(locationFromCharacter.getAttribute('location-id'));
+        printLocationMain(locationId);
+        printLocationsAside('https://rickandmortyapi.com/api/location?page=1');
+    });
 });
 const printLocationMain = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, type, dimension, residents, url, created } = yield getLocationData(id);
+    mainBox.innerHTML = `<h3 class="text-3xl mb-2">${name}</h3>
+    <p class="font-bold mb-2">Type: <span class="font-normal">${type}</span></p>
+    <p class="font-bold mb-2">Dimension: <span class="font-normal">${dimension}</span></p>
+
+    <div class="mb-4">
+        <h4 class="text-2xl mb-2">Characters from this dimension</h4>
+        <ul class="ps-2 flex flex-wrap gap-4">
+        ${residents.map(each => {
+        const id = each.slice(42);
+        return `
+            <li class="cursor-pointer hover:underline characterFromLocationMain">
+                <div>
+                    <h5 class="text-xl bold" character-id="${id}">Character ${id}</h5>
+                </div>
+            </li>
+            `;
+    }).join('')}
+        </ul>
+    </div>`;
+    const list = document.querySelectorAll('.characterFromLocationMain');
+    list.forEach(each => {
+        each.addEventListener('click', (e) => {
+            var _a;
+            const characterId = Number((_a = e.target) === null || _a === void 0 ? void 0 : _a.getAttribute('character-id'));
+            printCharacterMain(characterId);
+            printCharactersAside('https://rickandmortyapi.com/api/character?page=1');
+        });
+    });
 });
 const handleAsideEpisodeClick = (e) => {
-    const id = e.target.getAttribute('episode-id');
+    const id = e.target.getAttribute('episode-id') || e.target.parentElement.getAttribute('episode-id');
     printEspisodeMain(id);
 };
 const handleAsideCharacterClick = (e) => {
@@ -324,6 +361,8 @@ const handleAsideCharacterClick = (e) => {
     printCharacterMain(id);
 };
 const handleAsideLocationClick = (e) => {
+    const id = e.target.getAttribute('location-id');
+    printLocationMain(id);
 };
 const handleNextAsideBtnEpisodesClick = () => {
     if (nextAsideBtn.classList.contains('disabled'))
@@ -347,18 +386,30 @@ const handlePrevAsideBtnEpisodesClick = () => {
     }
     printEpisodesAside(start, end);
 };
-const handlePrevAsideBtnCharactersClick = () => __awaiter(void 0, void 0, void 0, function* () {
+const handlePrevAsideBtnCharactersClick = () => {
     if (prevAsideBtn.classList.contains('disabled'))
         return;
     const url = prevAsideBtn.getAttribute('prev-data');
     printCharactersAside(url);
-});
-const handleNextAsideBtnCharactersClick = () => __awaiter(void 0, void 0, void 0, function* () {
+};
+const handleNextAsideBtnCharactersClick = () => {
     if (nextAsideBtn.classList.contains('disabled'))
         return;
     const url = nextAsideBtn.getAttribute('next-data');
     printCharactersAside(url);
-});
+};
+const handlePrevAsideBtnLocationsClick = () => {
+    if (prevAsideBtn.classList.contains('disabled'))
+        return;
+    const url = prevAsideBtn.getAttribute('prev-data');
+    printLocationsAside(url);
+};
+const handleNextAsideBtnLocationsClick = () => {
+    if (nextAsideBtn.classList.contains('disabled'))
+        return;
+    const url = nextAsideBtn.getAttribute('next-data');
+    printLocationsAside(url);
+};
 document.addEventListener('DOMContentLoaded', () => {
     printEpisodesAside(1, 11);
     printEspisodeMain(1);
@@ -369,6 +420,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navgitationProperties.aside === 'characters') {
             handleNextAsideBtnCharactersClick();
         }
+        if (navgitationProperties.aside === 'locations') {
+            handleNextAsideBtnLocationsClick();
+        }
     });
     prevAsideBtn.addEventListener('click', () => {
         if (navgitationProperties.aside === 'episodes') {
@@ -376,6 +430,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (navgitationProperties.aside === 'characters') {
             handlePrevAsideBtnCharactersClick();
+        }
+        if (navgitationProperties.aside === 'locations') {
+            handlePrevAsideBtnLocationsClick();
         }
     });
 });
