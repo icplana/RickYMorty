@@ -1,3 +1,4 @@
+import { getCharacterData, getCharacters, getEpisodeData, getLocationData, getLocations, getEpisodes } from './APIRequests';
 import { Character, Episode, Location } from './types';
 
 const mainBox = document.getElementById('mainBox') as HTMLElement
@@ -19,60 +20,7 @@ const navgitationProperties:{
 
 
 
-//GET API INFO
 
-const getEpisodes = async ( url:string ) => {
-    
-    const response = await fetch(url)
-    const data = await response.json()
-
-    return data
-}
-
-const getCharacters = async ( url:string ) => {
-
-    const response = await fetch(url)
-    const data = await response.json()
-
-    return data
-}
-
-const getLocations = async ( url:string ) => {
-
-    const response = await fetch(url)
-    const data = await response.json()
-
-    return data
-}
-
-const getEpisodeData = async ( id: number ):Promise<Episode> => {
-
-    const url = 'https://rickandmortyapi.com/api/episode/' + id
-    const response = await fetch(url)
-    const data = await response.json()
-
-    return data
-}
-
-const getCharacterData = async (id: number ):Promise<Character> => {
-
-    const url = 'https://rickandmortyapi.com/api/character/' + id
-    const response = await fetch(url)
-    const data = await response.json()
-    // console.log(data)
-
-    return data
-}
-
-const getLocationData = async (id: number ):Promise<Location> => {
-
-    const url = 'https://rickandmortyapi.com/api/location/' + id
-    const response = await fetch(url)
-    const data = await response.json()
-    console.log(data)
-
-    return data
-}
 
 
 //PRINT ASIDES
