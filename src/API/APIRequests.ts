@@ -1,6 +1,6 @@
 //GET API INFO
 
-import { Character, Episode, Location } from "./types"
+import { Character, Episode, Location } from "../types/types.js"
 
 export const getEpisodes = async ( url:string ) => {
     
