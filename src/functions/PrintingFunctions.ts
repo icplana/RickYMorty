@@ -5,9 +5,25 @@ import { asideBoxList, asideBoxP, asideBoxTitle, mainBox, navgitationProperties,
 import { Character, Episode, Location } from "../types/types.js";
 import { handleAsideCharacterClick, handleAsideEpisodeClick, handleAsideLocationClick } from "./EventHandlers.js";
 
-export const cleanAsideEvents = () => {}
+export const cleanAsideEvents = () => {
+
+    const episodesList = document.querySelectorAll('.asideListEpisode')
+    episodesList?.forEach( element => element.removeEventListener('click', handleAsideEpisodeClick ))
+
+    const characterList = document.querySelectorAll('.asideListCharacter')
+    characterList?.forEach( element => element.addEventListener('click', handleAsideCharacterClick ))
+
+    const locationList = document.querySelectorAll('.asideListLocation')
+    locationList?.forEach( element => element.addEventListener('click', handleAsideLocationClick ))
+
+
+}
 
 export const printEpisodesAside = async (start:number, end: number ) => {
+
+    if ( !start || !end ) return
+
+    cleanAsideEvents()
 
     navgitationProperties.aside = 'episodes'
 
@@ -78,9 +94,9 @@ export const printEpisodesAside = async (start:number, end: number ) => {
     asideBoxList.innerHTML = ''
     asideBoxList.appendChild( htmlFragment )
 
-    const list = document.querySelectorAll('.asideListEpisode')
+    const episodesList = document.querySelectorAll('.asideListEpisode')
 
-    list.forEach( element => element.addEventListener('click', handleAsideEpisodeClick ))
+    episodesList.forEach( element => element.addEventListener('click', handleAsideEpisodeClick ))
 
     
 }
@@ -89,10 +105,9 @@ export const printCharactersAside = async ( url: string ) => {
     
     if ( url === null ) return
 
-    navgitationProperties.aside = 'characters'
+    cleanAsideEvents()
 
-    const list = document.querySelectorAll('.asideListEpisode')
-    list.forEach( element => element.removeEventListener('click', handleAsideEpisodeClick ))
+    navgitationProperties.aside = 'characters'
 
     const data = await getCharacters( url )
 
@@ -153,13 +168,9 @@ export const printLocationsAside = async ( url: string ) => {
 
     if ( url === null ) return
 
+    cleanAsideEvents()
+
     navgitationProperties.aside = 'locations'
-
-    const episodesList = document.querySelectorAll('.asideListEpisode')
-    episodesList.forEach( element => element.removeEventListener('click', handleAsideEpisodeClick ))
-
-    const characterList = document.querySelectorAll('.asideListCharacter')
-    characterList.forEach( element => element.removeEventListener('click', handleAsideCharacterClick ))
 
     const data = await getLocations( url )
 

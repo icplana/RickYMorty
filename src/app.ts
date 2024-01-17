@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // PENDING
 
     // - Avoid innerHTML in main renders
-    // - Organize the code in diferent sheets
+    // DONE - Organize the code in diferent sheets
     // - create cleaning event listener in main and aside
     // - create function to avoid repeating code in aside and main render functions
     // - use variables to avoid hardcoding suchs as 'episodes'/'characters'/'locations', urls or others

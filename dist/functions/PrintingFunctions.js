@@ -10,8 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { getCharacterData, getCharacters, getEpisodeData, getLocationData, getLocations } from "../API/APIRequests.js";
 import { asideBoxList, asideBoxP, asideBoxTitle, mainBox, navgitationProperties, nextAsideBtn, prevAsideBtn } from "../GlobalVariables.js";
 import { handleAsideCharacterClick, handleAsideEpisodeClick, handleAsideLocationClick } from "./EventHandlers.js";
-export const cleanAsideEvents = () => { };
+export const cleanAsideEvents = () => {
+    const episodesList = document.querySelectorAll('.asideListEpisode');
+    episodesList === null || episodesList === void 0 ? void 0 : episodesList.forEach(element => element.removeEventListener('click', handleAsideEpisodeClick));
+    const characterList = document.querySelectorAll('.asideListCharacter');
+    characterList === null || characterList === void 0 ? void 0 : characterList.forEach(element => element.addEventListener('click', handleAsideCharacterClick));
+    const locationList = document.querySelectorAll('.asideListLocation');
+    locationList === null || locationList === void 0 ? void 0 : locationList.forEach(element => element.addEventListener('click', handleAsideLocationClick));
+};
 export const printEpisodesAside = (start, end) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!start || !end)
+        return;
+    cleanAsideEvents();
     navgitationProperties.aside = 'episodes';
     let season = '';
     if (start === 1) {
@@ -69,16 +79,15 @@ export const printEpisodesAside = (start, end) => __awaiter(void 0, void 0, void
     }
     asideBoxList.innerHTML = '';
     asideBoxList.appendChild(htmlFragment);
-    const list = document.querySelectorAll('.asideListEpisode');
-    list.forEach(element => element.addEventListener('click', handleAsideEpisodeClick));
+    const episodesList = document.querySelectorAll('.asideListEpisode');
+    episodesList.forEach(element => element.addEventListener('click', handleAsideEpisodeClick));
 });
 export const printCharactersAside = (url) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     if (url === null)
         return;
+    cleanAsideEvents();
     navgitationProperties.aside = 'characters';
-    const list = document.querySelectorAll('.asideListEpisode');
-    list.forEach(element => element.removeEventListener('click', handleAsideEpisodeClick));
     const data = yield getCharacters(url);
     const page = Number(url.slice(47));
     const initialCharacter = page * 20 - 19;
@@ -123,11 +132,8 @@ export const printLocationsAside = (url) => __awaiter(void 0, void 0, void 0, fu
     var _c, _d;
     if (url === null)
         return;
+    cleanAsideEvents();
     navgitationProperties.aside = 'locations';
-    const episodesList = document.querySelectorAll('.asideListEpisode');
-    episodesList.forEach(element => element.removeEventListener('click', handleAsideEpisodeClick));
-    const characterList = document.querySelectorAll('.asideListCharacter');
-    characterList.forEach(element => element.removeEventListener('click', handleAsideCharacterClick));
     const data = yield getLocations(url);
     const page = Number(url.slice(46));
     const initialLocation = page * 20 - 19;
