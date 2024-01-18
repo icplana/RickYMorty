@@ -38,7 +38,6 @@ export const getLocationData = (id) => __awaiter(void 0, void 0, void 0, functio
     const url = 'https://rickandmortyapi.com/api/location/' + id;
     const response = yield fetch(url);
     const data = yield response.json();
-    console.log(data);
     return data;
 });
 //# sourceMappingURL=APIRequests.js.map

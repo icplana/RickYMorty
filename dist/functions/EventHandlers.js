@@ -1,5 +1,22 @@
-import { nextAsideBtn, prevAsideBtn } from "../GlobalVariables.js";
+import { characterStartUrl, locationStartUrl, nextAsideBtn, prevAsideBtn } from "../GlobalVariables.js";
 import { printCharacterMain, printCharactersAside, printEpisodesAside, printEspisodeMain, printLocationMain, printLocationsAside } from "./PrintingFunctions.js";
+export const handleMainCharacterClick = (e) => {
+    const characterId = Number(e.target.getAttribute('char-id') || e.target.parentElement.getAttribute('char-id') || e.target.parentElement.parentElement.getAttribute('char-id'));
+    printCharactersAside(characterStartUrl);
+    printCharacterMain(characterId);
+};
+export const handleMainEpisodeClick = (e) => {
+    var _a, _b;
+    const episodeId = Number(((_a = e.target) === null || _a === void 0 ? void 0 : _a.getAttribute('episode-id')) || ((_b = e.target) === null || _b === void 0 ? void 0 : _b.parentElement.getAttribute('episode-id')));
+    printEspisodeMain(episodeId);
+    printEpisodesAside(1, 11);
+};
+export const handleMainLocationClick = () => {
+    const locationFromCharacter = document.getElementById('locationFromMain');
+    const locationIdNumber = Number(locationFromCharacter.getAttribute('location-id'));
+    printLocationMain(locationIdNumber);
+    printLocationsAside(locationStartUrl);
+};
 export const handleAsideEpisodeClick = (e) => {
     const id = e.target.getAttribute('episode-id') || e.target.parentElement.getAttribute('episode-id');
     printEspisodeMain(id);

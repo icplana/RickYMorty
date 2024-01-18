@@ -1,3 +1,5 @@
+export const characterStartUrl = 'https://rickandmortyapi.com/api/character?page=1';
+export const locationStartUrl = 'https://rickandmortyapi.com/api/location?page=1';
 export const mainBox = document.getElementById('mainBox');
 export const asideBox = document.getElementById('asideBox');
 export const asideBoxTitle = document.getElementById('asideBoxTitle');

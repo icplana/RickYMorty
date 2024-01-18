@@ -3,7 +3,109 @@
 import { getCharacterData, getCharacters, getEpisodeData, getLocationData, getLocations } from "../API/APIRequests.js";
 import { asideBoxList, asideBoxP, asideBoxTitle, mainBox, navgitationProperties, nextAsideBtn, prevAsideBtn } from "../GlobalVariables.js";
 import { Character, Episode, Location } from "../types/types.js";
-import { handleAsideCharacterClick, handleAsideEpisodeClick, handleAsideLocationClick } from "./EventHandlers.js";
+import { handleAsideCharacterClick, handleAsideEpisodeClick, handleAsideLocationClick, handleMainCharacterClick, handleMainEpisodeClick, handleMainLocationClick } from "./EventHandlers.js";
+
+
+
+//GENERAL FUNCTIONS
+
+const printCharactersListForMain =  ( characters: string[] ) => {
+
+    const charactersUl = document.createElement('ul')
+    charactersUl.classList.add('ps-2', 'flex', 'flex-wrap', 'gap-4')
+
+    characters.forEach( each => {
+
+        const li = document.createElement('li')
+
+        const liBox = document.createElement('div')
+        liBox.classList.add('mb-1', 'mr-2','characterFromMain')
+        
+
+        fetch(each)
+            .then( resp => resp.json())
+            .then( data => {
+                liBox.setAttribute('char-id', data.id )
+
+                const img = document.createElement('img')
+                img.src = data.image
+                img.classList.add('w-60', 'rounded-lg', 'cursor-pointer')
+                liBox.appendChild( img )
+
+                const characterHeader = document.createElement('h5')
+                characterHeader.classList.add('text-xl')
+                characterHeader.textContent = data.name
+                liBox.appendChild(characterHeader)
+
+                const characterInfoBox = document.createElement('div')
+                
+                const characterStatusP = document.createElement('p')
+                characterStatusP.textContent = `Status: ${data.status}`
+                characterInfoBox.appendChild( characterStatusP )
+
+                const characterSpecieP = document.createElement('p')
+                characterSpecieP.textContent = `Specie: ${data.species}`
+                characterInfoBox.appendChild( characterSpecieP )
+
+                liBox.appendChild( characterInfoBox )
+   
+
+            })
+
+        li.appendChild(liBox)
+
+        charactersUl.appendChild(li)
+        
+    })
+
+    return charactersUl
+}
+const printEpisodesListForMain =  ( episodes: string[] ) => {
+
+    const episodesUl = document.createElement('ul')
+    episodesUl.classList.add('ps-2', 'flex', 'flex-wrap', 'gap-4')
+
+    episodes.forEach( each => {
+
+        const li = document.createElement('li')
+
+        const liBox = document.createElement('div')
+        liBox.classList.add('mb-1', 'mr-2','episodeFromMain', 'w-48', 'cursor-pointer')
+        
+
+        fetch(each)
+            .then( resp => resp.json())
+            .then( data => {
+                liBox.setAttribute('episode-id', data.id )                
+
+                const episodeHeader = document.createElement('h5')
+                episodeHeader.classList.add('text-xl')
+                episodeHeader.textContent = data.name
+                liBox.appendChild(episodeHeader)
+
+                const episodeCodeP = document.createElement('p')
+                episodeCodeP.textContent = data.episode
+                liBox.appendChild( episodeCodeP )
+                
+                const episodeAirDateP = document.createElement('p')
+                episodeAirDateP.textContent = data.air_date
+                liBox.appendChild( episodeAirDateP )
+
+            })
+
+        li.appendChild(liBox)
+
+        episodesUl.appendChild(li)
+        
+    })
+
+    return episodesUl
+}
+
+
+
+
+//PRINT ASIDE
 
 export const cleanAsideEvents = () => {
 
@@ -228,10 +330,22 @@ export const printLocationsAside = async ( url: string ) => {
 
 //PRINT MAINS
 
-export const cleanMainEvens = () => {}
+export const cleanMainEvents = () => {
+
+    const characterList = document.querySelectorAll('.characterFromMain') as NodeList    
+    characterList?.forEach(each => each.removeEventListener('click', handleMainCharacterClick ))
+
+    const episodeList = document.querySelectorAll('.episodeFromMain') as NodeList
+    episodeList?.forEach( each => each.removeEventListener('click', (e:any) => handleMainEpisodeClick ))
+
+    const locationFromCharacter = document.getElementById('locationFromCharacter') as HTMLSpanElement
+    locationFromCharacter?.removeEventListener('click', () => handleMainLocationClick())
+}
 
 export const printEspisodeMain = async (id:number) => {
     
+    cleanMainEvents()
+
     mainBox.innerHTML = ''
 
     const { name, air_date, episode, characters, url, created } = await getEpisodeData(id)
@@ -263,51 +377,8 @@ export const printEspisodeMain = async (id:number) => {
     charactersHeader.textContent = 'Characters in this episode'
     charactersBox.appendChild( charactersHeader )    
 
-    const charactersUl = document.createElement('ul')
-    charactersUl.classList.add('ps-2', 'flex', 'flex-wrap', 'gap-4')
-    characters.forEach( each => {
 
-        const li = document.createElement('li')
-
-        const liBox = document.createElement('div')
-        liBox.classList.add('mb-1', 'mr-2','characterFromEpisodeMain')
-        
-
-        fetch(each)
-            .then( resp => resp.json())
-            .then( data => {
-                liBox.setAttribute('char-id', data.id )
-
-                const img = document.createElement('img')
-                img.src = data.image
-                img.classList.add('w-60', 'rounded-lg', 'cursor-pointer')
-                liBox.appendChild( img )
-
-                const characterHeader = document.createElement('h5')
-                characterHeader.classList.add('text-xl')
-                characterHeader.textContent = data.name
-                liBox.appendChild(characterHeader)
-
-                const characterInfoBox = document.createElement('div')
-                
-                const characterStatusP = document.createElement('p')
-                characterStatusP.textContent = `Status: ${data.status}`
-                characterInfoBox.appendChild( characterStatusP )
-
-                const characterSpecieP = document.createElement('p')
-                characterSpecieP.textContent = `Specie: ${data.species}`
-                characterInfoBox.appendChild( characterSpecieP )
-
-                liBox.appendChild( characterInfoBox )
-   
-
-            })
-
-        li.appendChild(liBox)
-
-        charactersUl.appendChild(li)
-        
-    })
+    const charactersUl = printCharactersListForMain(characters)
 
     charactersBox.appendChild(charactersUl)
 
@@ -315,106 +386,149 @@ export const printEspisodeMain = async (id:number) => {
 
     mainBox.appendChild( HTMLFragment )
 
-    const characterList = document.querySelectorAll('.characterFromEpisodeMain') as NodeList
-
-    
-
-    characterList.forEach(each => each.addEventListener('click', (e:any) => {
-      
-        const characterId:number = Number(e.target.parentElement.getAttribute('char-id')||e.target.parentElement.parentElement.getAttribute('char-id'))
-        
-        printCharactersAside('https://rickandmortyapi.com/api/character?page=1')
-        printCharacterMain(characterId)
-
-    }))
+    const characterList = document.querySelectorAll('.characterFromMain') as NodeList    
+    characterList.forEach(each => each.addEventListener('click', handleMainCharacterClick ))
 }
 
 
 export const printCharacterMain = async (id:number):Promise<void> => {
 
+    cleanMainEvents()
+
+
     const { name, status, species, type, gender, origin, location, image, episode, url, created }:Character = await getCharacterData( id )
     const locationId = location.url.slice(41)
-    mainBox.innerHTML = `
-    <div class="flex gap-4 mb-4">
-        <div>
-            <img src="${image}" class="rounded-2xl" alt="">
-        </div>
-        <div>
-            <h3 class="text-3xl">${name}</h3>
-            <p class="font-bold">Specie: <span class="font-normal">${species}</span></p>
-            <p class="font-bold">Status: <span class="font-normal">${status}</span></p>
-            <p class="font-bold">Gender: <span class="font-normal">${gender}</span></p>
-            <p class="font-bold">Dimension: <span location-id="${locationId}" id="locationFromCharacter" class="font-normal hover:underline cursor-pointer">${location.name}</span></p>
-        </div>
-    </div>
 
-    <div class="ms-2">
-        <h4 class="text-2xl mb-2 font-semibold">List of episodes where ${name} appears</h4>
-        <ul class="flex flex-wrap gap-6">
-            ${episode.map( each => {
-                const id = each.slice(40)
-                return `
-                <li class="cursor-pointer hover:underline episodeFromCharacterMain">
-                    <div>
-                        <h5 class="text-xl bold" episode-id="${id}">Episode ${id}</h5>
-                    </div>
-                </li>
-                `
-            }).join('')}
-        </ul>
-    </div>`
+    mainBox.innerHTML = ''
+
+    const firstDiv = document.createElement('div')
+    firstDiv.classList.add('flex', 'gap-4', 'mb-4')
+
+    const imgDiv = document.createElement('div')
+    const img = document.createElement('img')
+    img.src = image
+    imgDiv.appendChild(img)
+
+    firstDiv.appendChild(imgDiv)
+
+    const textDiv = document.createElement('div')
+
+    const textHeader = document.createElement('h3')
+    textHeader.classList.add('text-3xl')
+    textHeader.textContent = name
+    textDiv.appendChild(textHeader)
+
+    const specieP = document.createElement('p')
+    specieP.classList.add('font-bold')
+    specieP.textContent = 'Specie: '
+    const specieSpan = document.createElement('span')
+    specieSpan.classList.add('font-normal')
+    specieSpan.textContent = species
+    specieP.appendChild(specieSpan)
+    textDiv.appendChild(specieP)
+
+    const statusP = document.createElement('p')
+    statusP.classList.add('font-bold')
+    statusP.textContent = 'Status: '
+    const statusSpan = document.createElement('span')
+    statusSpan.classList.add('font-normal')
+    statusSpan.textContent = status
+    statusP.appendChild(statusSpan)
+    textDiv.appendChild(statusP)
+
+    const genderP = document.createElement('p')
+    genderP.classList.add('font-bold')
+    genderP.textContent = 'Gender: '
+    const genderSpan = document.createElement('span')
+    genderSpan.classList.add('font-normal')
+    genderSpan.textContent = gender
+    genderP.appendChild(genderSpan)
+    textDiv.appendChild(genderP)
+
+    const locationP = document.createElement('p')
+    locationP.classList.add('font-bold')
+    locationP.textContent = 'Location: '
+    const locationSpan = document.createElement('span')
+    locationSpan.id = 'locationFromMain'
+    locationSpan.classList.add('font-normal')
+    locationSpan.setAttribute('location-id', locationId)
+    locationSpan.textContent = location.name
+    locationP.appendChild(locationSpan)
+    textDiv.appendChild(locationP)
+
+    firstDiv.appendChild(textDiv)
+
+    const secondDiv = document.createElement('div')
+    secondDiv.classList.add('ms-2')
     
-    const list = document.querySelectorAll('.episodeFromCharacterMain') as NodeList
+    const secondDivHeader = document.createElement('h4')
+    secondDivHeader.classList.add('text-2xl', 'mb-2', 'font-semibold')
+    secondDivHeader.textContent =`List of episodes where ${name} appears`
+    secondDiv.appendChild(secondDivHeader)
 
-    list.forEach( each => {
-        each.addEventListener('click', (e:any) => {
-            const episodeId = Number( e.target?.getAttribute('episode-id'))
-            printEspisodeMain( episodeId )
-            printEpisodesAside( 1, 11)
-        })
-    })
+    const episodeUl = printEpisodesListForMain(episode)
+    secondDiv.appendChild(episodeUl)
 
-    const locationFromCharacter = document.getElementById('locationFromCharacter') as HTMLSpanElement
-    locationFromCharacter.addEventListener('click', () => {
-        const locationId = Number(locationFromCharacter.getAttribute('location-id'))
-        printLocationMain(locationId)
-        printLocationsAside( 'https://rickandmortyapi.com/api/location?page=1' )
-    })
+    mainBox.append(firstDiv, secondDiv)
+
+    
+    const episodeList = document.querySelectorAll('.episodeFromMain') as NodeList
+    episodeList.forEach( each => each.addEventListener('click', handleMainEpisodeClick ))
+
+    const locationFromCharacter = document.getElementById('locationFromMain') as HTMLSpanElement
+    locationFromCharacter.addEventListener('click', handleMainLocationClick )
 }
 
 
 export const printLocationMain = async (id:number):Promise<void> => {
 
+    cleanMainEvents()
+
     const { name, type, dimension, residents, url, created } = await getLocationData( id )
 
-    mainBox.innerHTML =`<h3 class="text-3xl mb-2">${name}</h3>
-    <p class="font-bold mb-2">Type: <span class="font-normal">${type}</span></p>
-    <p class="font-bold mb-2">Dimension: <span class="font-normal">${dimension}</span></p>
+    mainBox.innerHTML = ''
 
-    <div class="mb-4">
-        <h4 class="text-2xl mb-2">Characters from this dimension</h4>
-        <ul class="ps-2 flex flex-wrap gap-4">
-        ${residents.map( each => {
-            const id = each.slice(42)
-            return `
-            <li class="cursor-pointer hover:underline characterFromLocationMain">
-                <div>
-                    <h5 class="text-xl bold" character-id="${id}">Character ${id}</h5>
-                </div>
-            </li>
-            `
-        }).join('')}
-        </ul>
-    </div>`
+    const HTMLFragment = document.createDocumentFragment()
 
-    const list = document.querySelectorAll('.characterFromLocationMain') as NodeList
+    const locationHeader = document.createElement('h3')
+    locationHeader.classList.add('text-3xl', 'mb-2')
+    locationHeader.textContent = name
+    HTMLFragment.appendChild(locationHeader)
 
-    list.forEach( each => {
-        each.addEventListener('click', (e:any) => {
-            const characterId = Number( e.target?.getAttribute('character-id'))
-            printCharacterMain( characterId )
-            printCharactersAside( 'https://rickandmortyapi.com/api/character?page=1' )
-        })
-    })
+    const typeP = document.createElement('p')
+    typeP.classList.add('font-bold', 'mb-2')
+    typeP.textContent = 'Type: '
+    const typeSpan = document.createElement('span')
+    typeSpan.classList.add('font-normal')
+    typeSpan.textContent = type
+    typeP.appendChild(typeSpan)
+    HTMLFragment.appendChild(typeP)
+
+    const dimensionP = document.createElement('p')
+    dimensionP.classList.add('font-bold', 'mb-2')
+    dimensionP.textContent = 'Dimension: '
+    const dimensionSpan = document.createElement('span')
+    dimensionSpan.classList.add('font-normal')
+    dimensionSpan.textContent = dimension
+    dimensionP.appendChild(dimensionSpan)
+    HTMLFragment.appendChild(dimensionP)
+
+    const listDiv = document.createElement('div')
+    listDiv.classList.add('mb-4')
+
+    const listHeader = document.createElement('h4')
+    listHeader.classList.add('text-2xl', 'mb-2')
+    listHeader.textContent = 'Characters from this dimension'
+    listDiv.appendChild(listHeader)
+
+    const charactersUl = printCharactersListForMain(residents)
+    listDiv.appendChild(charactersUl)
+
+    HTMLFragment.appendChild(listDiv)
+
+    mainBox.appendChild(HTMLFragment)   
+
+    const characterList = document.querySelectorAll('.characterFromMain') as NodeList    
+    characterList.forEach(each => each.addEventListener('click', handleMainCharacterClick ))
 
 }

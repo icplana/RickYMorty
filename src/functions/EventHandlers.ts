@@ -1,7 +1,35 @@
 //HANDLE CLICK EVENTS
 
-import { nextAsideBtn, prevAsideBtn } from "../GlobalVariables.js"
+import { characterStartUrl, locationStartUrl, nextAsideBtn, prevAsideBtn } from "../GlobalVariables.js"
 import { printCharacterMain, printCharactersAside, printEpisodesAside, printEspisodeMain, printLocationMain, printLocationsAside } from "./PrintingFunctions.js"
+
+
+
+export const handleMainCharacterClick = (e:any) => {
+    
+    const characterId:number = Number(e.target.getAttribute('char-id') || e.target.parentElement.getAttribute('char-id')||e.target.parentElement.parentElement.getAttribute('char-id'))
+    printCharactersAside( characterStartUrl )
+    printCharacterMain(characterId)
+}
+
+export const handleMainEpisodeClick = (e:any) => {
+
+    const episodeId = Number( e.target?.getAttribute('episode-id') || e.target?.parentElement.getAttribute('episode-id')) 
+    printEspisodeMain( episodeId )
+    printEpisodesAside( 1, 11 )
+}
+
+export const handleMainLocationClick = () => {  
+
+    const locationFromCharacter = document.getElementById('locationFromMain') as HTMLSpanElement
+    const locationIdNumber = Number(locationFromCharacter.getAttribute('location-id'))
+    printLocationMain(locationIdNumber)
+    printLocationsAside( locationStartUrl )
+}
+
+
+
+
 
 
 export const handleAsideEpisodeClick = (e:any):void => {

@@ -40,7 +40,6 @@ export const getCharacterData = async (id: number ):Promise<Character> => {
     const url = 'https://rickandmortyapi.com/api/character/' + id
     const response = await fetch(url)
     const data = await response.json()
-    // console.log(data)
 
     return data
 }
@@ -50,7 +49,7 @@ export const getLocationData = async (id: number ):Promise<Location> => {
     const url = 'https://rickandmortyapi.com/api/location/' + id
     const response = await fetch(url)
     const data = await response.json()
-    console.log(data)
+
 
     return data
 }
