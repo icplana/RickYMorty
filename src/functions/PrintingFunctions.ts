@@ -450,7 +450,7 @@ export const printCharacterMain = async (id:number):Promise<void> => {
     locationP.textContent = 'Location: '
     const locationSpan = document.createElement('span')
     locationSpan.id = 'locationFromMain'
-    locationSpan.classList.add('font-normal')
+    locationSpan.classList.add('font-normal','cursor-pointer')
     locationSpan.setAttribute('location-id', locationId)
     locationSpan.textContent = location.name
     locationP.appendChild(locationSpan)

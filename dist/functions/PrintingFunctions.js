@@ -318,7 +318,7 @@ export const printCharacterMain = (id) => __awaiter(void 0, void 0, void 0, func
     locationP.textContent = 'Location: ';
     const locationSpan = document.createElement('span');
     locationSpan.id = 'locationFromMain';
-    locationSpan.classList.add('font-normal');
+    locationSpan.classList.add('font-normal', 'cursor-pointer');
     locationSpan.setAttribute('location-id', locationId);
     locationSpan.textContent = location.name;
     locationP.appendChild(locationSpan);
