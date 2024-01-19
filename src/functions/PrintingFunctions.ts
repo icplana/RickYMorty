@@ -176,6 +176,7 @@ export const printEpisodesAside = async (start:number, end: number ) => {
     }
     
     asideBoxTitle.textContent = season
+    asideBoxP.textContent = ''
 
     let htmlFragment = document.createDocumentFragment()
 
