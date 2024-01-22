@@ -1,5 +1,5 @@
-export const characterStartUrl = 'https://rickandmortyapi.com/api/character?page=1'
-export const locationStartUrl = 'https://rickandmortyapi.com/api/location?page=1'
+export const characterStartUrl:string = 'https://rickandmortyapi.com/api/character?page=1'
+export const locationStartUrl:string = 'https://rickandmortyapi.com/api/location?page=1'
 
 
 export const mainBox = document.getElementById('mainBox') as HTMLElement

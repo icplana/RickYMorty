@@ -5,21 +5,21 @@ import { printCharacterMain, printCharactersAside, printEpisodesAside, printEspi
 
 
 
-export const handleMainCharacterClick = (e:any) => {
+export const handleMainCharacterClick = (e:any):void => {
     
     const characterId:number = Number(e.target.getAttribute('char-id') || e.target.parentElement.getAttribute('char-id')||e.target.parentElement.parentElement.getAttribute('char-id'))
     printCharactersAside( characterStartUrl )
     printCharacterMain(characterId)
 }
 
-export const handleMainEpisodeClick = (e:any) => {
+export const handleMainEpisodeClick = (e:any):void => {
 
     const episodeId = Number( e.target?.getAttribute('episode-id') || e.target?.parentElement.getAttribute('episode-id')) 
     printEspisodeMain( episodeId )
     printEpisodesAside( 1, 11 )
 }
 
-export const handleMainLocationClick = () => {  
+export const handleMainLocationClick = ():void => {  
 
     const locationFromCharacter = document.getElementById('locationFromMain') as HTMLSpanElement
     const locationIdNumber = Number(locationFromCharacter.getAttribute('location-id'))

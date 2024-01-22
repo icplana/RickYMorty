@@ -107,7 +107,7 @@ const printEpisodesListForMain =  ( episodes: string[] ) => {
 
 //PRINT ASIDE
 
-export const cleanAsideEvents = () => {
+export const cleanAsideEvents = ():void => {
 
     const episodesList = document.querySelectorAll('.asideListEpisode')
     episodesList?.forEach( element => element.removeEventListener('click', handleAsideEpisodeClick ))
@@ -121,7 +121,7 @@ export const cleanAsideEvents = () => {
 
 }
 
-export const printEpisodesAside = async (start:number, end: number ) => {
+export const printEpisodesAside = async (start:number, end: number ):Promise<void> => {
 
     if ( !start || !end ) return
 
@@ -204,7 +204,7 @@ export const printEpisodesAside = async (start:number, end: number ) => {
     
 }
 
-export const printCharactersAside = async ( url: string ) => {
+export const printCharactersAside = async ( url: string ):Promise<void> => {
     
     if ( url === null ) return
 
@@ -267,7 +267,7 @@ export const printCharactersAside = async ( url: string ) => {
     
 }
 
-export const printLocationsAside = async ( url: string ) => {
+export const printLocationsAside = async ( url: string ):Promise<void> => {
 
     if ( url === null ) return
 
@@ -331,7 +331,7 @@ export const printLocationsAside = async ( url: string ) => {
 
 //PRINT MAINS
 
-export const cleanMainEvents = () => {
+export const cleanMainEvents = ():void => {
 
     const characterList = document.querySelectorAll('.characterFromMain') as NodeList    
     characterList?.forEach(each => each.removeEventListener('click', handleMainCharacterClick ))
@@ -343,7 +343,7 @@ export const cleanMainEvents = () => {
     locationFromCharacter?.removeEventListener('click', () => handleMainLocationClick())
 }
 
-export const printEspisodeMain = async (id:number) => {
+export const printEspisodeMain = async (id:number):Promise<void> => {
     
     cleanMainEvents()
 
